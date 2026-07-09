@@ -1,5 +1,6 @@
 package com.ocupa.ocupa.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +12,7 @@ public class PortfolioMedia {
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
+    @JsonIgnore
     private Portfolio portfolio;
 
     private String mediaType;

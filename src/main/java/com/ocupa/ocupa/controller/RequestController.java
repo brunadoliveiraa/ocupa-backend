@@ -16,6 +16,16 @@ public class RequestController {
     @GetMapping
     public List<Request> all(){ return repo.findAll(); }
 
+    @GetMapping("/provider/{artistaId}")
+    public List<Request> getByProvider(@PathVariable Integer artistaId) {
+        return repo.findByProviderId(artistaId);
+    }
+
+    @GetMapping("/requester/{email}")
+    public List<Request> getByRequester(@PathVariable String email) {
+        return repo.findByRequesterContato(email);
+    }
+
     @PostMapping
     public Request create(@RequestBody Request r){ return repo.save(r); }
 
