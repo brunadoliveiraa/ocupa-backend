@@ -27,6 +27,8 @@ public class Oportunidade {
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public String getTipo() { return tipo; }
+    private String criadoPorEmail;
+
     public void setTipo(String tipo) { this.tipo = tipo; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
@@ -40,4 +42,6 @@ public class Oportunidade {
     public void setInscricaoLink(String inscricaoLink) { this.inscricaoLink = inscricaoLink; }
     public String getContato() { return contato; }
     public void setContato(String contato) { this.contato = contato; }
+    public String getCriadoPorEmail() { return criadoPorEmail; }
+    public void setCriadoPorEmail(String criadoPorEmail) { this.criadoPorEmail = criadoPorEmail; }
 }

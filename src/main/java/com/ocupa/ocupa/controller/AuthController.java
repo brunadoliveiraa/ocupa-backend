@@ -53,35 +53,36 @@ public class AuthController {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(Map.of(
-                "id", user.getId(),
-                "nome", user.getNome(),
-                "email", user.getEmail(),
-                "role", user.getRole(),
-                "artistaId", user.getArtistaId()
-        ));
+        java.util.Map<String, Object> registerResponse = new java.util.HashMap<>();
+        registerResponse.put("id", user.getId());
+        registerResponse.put("nome", user.getNome());
+        registerResponse.put("email", user.getEmail());
+        registerResponse.put("role", user.getRole());
+        registerResponse.put("artistaId", user.getArtistaId());
+
+        return ResponseEntity.ok(registerResponse);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         if (request.getEmail() == null || request.getSenha() == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email e senha são obrigatórios"));
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Email e senha são obrigatórios"));
         }
 
         return userRepository.findByEmail(request.getEmail())
                 .map(user -> {
                     if (passwordEncoder.matches(request.getSenha(), user.getSenha())) {
-                        return ResponseEntity.ok(Map.of(
-                                "id", user.getId(),
-                                "nome", user.getNome(),
-                                "email", user.getEmail(),
-                                "role", user.getRole(),
-                                "artistaId", user.getArtistaId()
-                        ));
+                        java.util.Map<String, Object> loginResponse = new java.util.HashMap<>();
+                        loginResponse.put("id", user.getId());
+                        loginResponse.put("nome", user.getNome());
+                        loginResponse.put("email", user.getEmail());
+                        loginResponse.put("role", user.getRole());
+                        loginResponse.put("artistaId", user.getArtistaId());
+                        return ResponseEntity.ok(loginResponse);
                     }
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciais inválidas"));
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("error", "Credenciais inválidas"));
                 })
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciais inválidas")));
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("error", "Credenciais inválidas")));
     }
 
     public static class RegisterRequest {
