@@ -15,8 +15,16 @@ public class OcupaBackendApplication {
     }
 
     @Bean
-    public CommandLineRunner initDatabase(UserRepository userRepo) {
+    public CommandLineRunner initDatabase(UserRepository userRepo, org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
         return args -> {
+            try {
+                jdbcTemplate.execute("ALTER TABLE artista MODIFY COLUMN foto_url LONGTEXT");
+                jdbcTemplate.execute("ALTER TABLE portfolio_media MODIFY COLUMN url LONGTEXT");
+                System.out.println("Migracao de colunas executada com sucesso!");
+            } catch (Exception e) {
+                System.err.println("Erro ao executar migracao de colunas: " + e.getMessage());
+            }
+
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             
             // Register admin@admin.com

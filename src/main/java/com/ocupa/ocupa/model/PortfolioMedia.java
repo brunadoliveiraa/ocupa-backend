@@ -16,6 +16,7 @@ public class PortfolioMedia {
     private Portfolio portfolio;
 
     private String mediaType;
+    @Column(columnDefinition = "LONGTEXT")
     private String url;
     private String caption;
 

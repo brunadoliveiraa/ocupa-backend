@@ -18,6 +18,7 @@ public class Artista {
     private String contato;
     private String cidade;
     private String redesSociais;
+    @Column(columnDefinition = "LONGTEXT")
     private String fotoUrl;
     private Double latitude;
     private Double longitude;
