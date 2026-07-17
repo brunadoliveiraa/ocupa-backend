@@ -1,9 +1,9 @@
-Nome Artístico / Coletivo: Ébano Bronca
-E-mail: ebano.bronca@gmail.com
-Senha: 1234
-Sua Categoria de Atuação Principal: Grafite
+- Nome Artístico / Coletivo: Ébano Bronca
+- E-mail: ebano.bronca@gmail.com
+- Senha: 1234
+- Sua Categoria de Atuação Principal: Grafite
 
-Cidade: Duque de Caxias
-Headline / Slogan Profissional: Grafiteiro profissional
-Sobre você (Bio detalhada de portfólio): Sou grafiteiro profissional blablabla...
-Contato: ebano.bronca@gmail.com
+- Cidade: Rio de Janeiro
+- Headline / Slogan Profissional: Grafiteiro
+Sobre você (Bio detalhada de portfólio):Flávio dos Santos, 41 anos. Um dos fundadores da Batalha da Caixinha e um dos precursores do movimento hip hop na comunidade. Ensinou grafite para a geração de agora e, assim como despertou em muita gente da comunidade a paixão pela arte, foi mestre de grande parte dos artistas locais que hoje vivem das suas expressões e lutam para conquistar seu lugar.
+- Contato: ebano.bronca@gmail.com
