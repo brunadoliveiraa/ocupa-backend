@@ -1,0 +1,7 @@
+- Nome do Espaço: Piscinão de Deodoro - Rua
+- Endereço: Av. Maquinista José Santana, 103 - Marechal Hermes
+- Descrição / Histórico: Espaço de passagem ou tido como "ocioso" que serve de palco para a arte.
+- Capacidade Aproximada de Público: 70
+- Latitude/Longitude: -22.852811403065406, -43.38298508561204
+- Atributos Físicos: 
+- Atividades Permitidas: Batalhas de rimas, danças

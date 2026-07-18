@@ -1,0 +1,7 @@
+- Nome do Espaço: Piscinão de Deodoro - Fachada
+- Endereço: Av. Maquinista José Santana, 88 - Marechal Hermes
+- Descrição / Histórico: Essa fachada lateral do Piscinão tem uma marquise que serve de abrigo e cobertura para pequenos eventos. 
+- Capacidade Aproximada de Público: 30
+- Latitude/Longitude: -22.85256809307698, -43.383016310350754
+- Atributos Físicos: Iluminação, Cobertura
+- Atividades Permitidas: Batalhas de rimas, danças, grafite/mural

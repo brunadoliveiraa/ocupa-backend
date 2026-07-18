@@ -1,0 +1,7 @@
+- Nome do Espaço: Largo da Madre Benedita
+- Endereço: Rua Osman Lins
+- Descrição / Histórico: Largo com conjunto de bares e que costuma reunir batalhas de rima.
+- Capacidade Aproximada de Público: 80
+- Latitude/Longitude: -22.85015048069393, -43.38316329874028
+- Atributos Físicos: Energia elétrica, iluminação
+- Atividades Permitidas: Batalhas de rimas, danças

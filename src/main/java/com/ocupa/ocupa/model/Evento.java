@@ -58,4 +58,10 @@ public class Evento {
     public void setLongitude(Double longitude) { this.longitude = longitude; }
     public String getCriadoPorEmail() { return criadoPorEmail; }
     public void setCriadoPorEmail(String criadoPorEmail) { this.criadoPorEmail = criadoPorEmail; }
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String fotoUrl;
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

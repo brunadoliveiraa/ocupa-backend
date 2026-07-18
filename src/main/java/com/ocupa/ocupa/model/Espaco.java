@@ -28,6 +28,9 @@ public class Espaco {
 
     private String criadoPorEmail;
 
+    @OneToMany(mappedBy = "espaco", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<EspacoMedia> mediaItems = new java.util.ArrayList<>();
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getNome() { return nome; }
@@ -45,7 +48,7 @@ public class Espaco {
     public Boolean getBanheiro() { return banheiro; }
     public void setBanheiro(Boolean banheiro) { this.banheiro = banheiro; }
     public Integer getCapacidade() { return capacidade; }
-    public void setCapacidade(Integer capacidade) { this.capacidade = capacidade; }
+    public void setCapacidade(Integer capacidad) { this.capacidade = capacidad; }
     public Boolean getPermiteGrafite() { return permiteGrafite; }
     public void setPermiteGrafite(Boolean permiteGrafite) { this.permiteGrafite = permiteGrafite; }
     public Boolean getPermiteBatalha() { return permiteBatalha; }
@@ -58,4 +61,6 @@ public class Espaco {
     public void setLongitude(Double longitude) { this.longitude = longitude; }
     public String getCriadoPorEmail() { return criadoPorEmail; }
     public void setCriadoPorEmail(String criadoPorEmail) { this.criadoPorEmail = criadoPorEmail; }
+    public java.util.List<EspacoMedia> getMediaItems() { return mediaItems; }
+    public void setMediaItems(java.util.List<EspacoMedia> mediaItems) { this.mediaItems = mediaItems; }
 }

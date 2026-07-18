@@ -1,0 +1,7 @@
+- Nome do Espaço: Muros da Estação de Trem de Deodoro
+- Endereço: Tv. Reta de Honório, 153
+- Descrição / Histórico: Espaço que costuma abrigar grafites e pixos.
+- Capacidade Aproximada de Público: 150
+- Latitude/Longitude: -22.854042071204635, -43.37788103523276
+- Atributos Físicos: Iluminação
+- Atividades Permitidas: Grafite/Mural

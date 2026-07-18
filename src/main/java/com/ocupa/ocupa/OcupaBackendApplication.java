@@ -19,6 +19,7 @@ public class OcupaBackendApplication {
             UserRepository userRepo, 
             com.ocupa.ocupa.repository.ArtistaRepository artistaRepo,
             com.ocupa.ocupa.repository.PortfolioRepository portfolioRepo,
+            com.ocupa.ocupa.repository.EspacoRepository espacoRepo,
             org.springframework.jdbc.core.JdbcTemplate jdbcTemplate,
             javax.sql.DataSource dataSource) {
         return args -> {
@@ -36,6 +37,12 @@ public class OcupaBackendApplication {
             try {
                 jdbcTemplate.execute("ALTER TABLE artista MODIFY COLUMN foto_url LONGTEXT");
                 jdbcTemplate.execute("ALTER TABLE portfolio_media MODIFY COLUMN url LONGTEXT");
+                try {
+                    jdbcTemplate.execute("ALTER TABLE espaco_media MODIFY COLUMN url LONGTEXT");
+                } catch (Exception ignored) {}
+                try {
+                    jdbcTemplate.execute("ALTER TABLE evento ADD COLUMN foto_url LONGTEXT");
+                } catch (Exception ignored) {}
                 System.out.println("Migracao de colunas executada com sucesso!");
             } catch (Exception e) {
                 System.err.println("Erro ao executar migracao de colunas: " + e.getMessage());
@@ -43,10 +50,20 @@ public class OcupaBackendApplication {
 
             // Limpar dados de seed anteriores (para evitar duplicidade ou cadastros parciais corrompidos)
             try {
+                // Delete events referencing seeded artists or spaces first to prevent FK failures
+                jdbcTemplate.execute("DELETE FROM evento WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
+                jdbcTemplate.execute("DELETE FROM evento WHERE espaco_id IN (SELECT id FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua'))");
+                
+                jdbcTemplate.execute("DELETE FROM analytics WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
                 jdbcTemplate.execute("DELETE FROM portfolio_media WHERE portfolio_id IN (SELECT id FROM portfolio WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca')))");
                 jdbcTemplate.execute("DELETE FROM portfolio WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
                 jdbcTemplate.execute("DELETE FROM users WHERE email IN ('elias.mast@gmail.com', 'igor.izy@gmail.com', 'mazur.13@gmail.com', 'ebano.bronca@gmail.com')");
                 jdbcTemplate.execute("DELETE FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca')");
+                
+                // Cleanup seeded spaces
+                jdbcTemplate.execute("DELETE FROM espaco_media WHERE espaco_id IN (SELECT id FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua'))");
+                jdbcTemplate.execute("DELETE FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua')");
+                
                 System.out.println("Limpeza de registros antigos executada com sucesso!");
             } catch (Exception e) {
                 System.err.println("Erro ao limpar registros antigos: " + e.getMessage());
@@ -183,6 +200,122 @@ public class OcupaBackendApplication {
                             System.out.println("Artista " + nome + " cadastrado e populado com sucesso!");
                         } catch (Exception ex) {
                             System.err.println("Erro ao popular artista na pasta " + artistDir.getName() + ": " + ex.getMessage());
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            // Popular espaços a partir da pasta "Popular lugares"
+            java.io.File popularPlacesDir = new java.io.File("Popular lugares");
+            if (popularPlacesDir.exists() && popularPlacesDir.isDirectory()) {
+                System.out.println("Encontrada pasta 'Popular lugares'. Iniciando populacao de dados...");
+                java.io.File[] placeDirs = popularPlacesDir.listFiles(java.io.File::isDirectory);
+                if (placeDirs != null) {
+                    for (java.io.File placeDir : placeDirs) {
+                        try {
+                            java.io.File txtFile = new java.io.File(placeDir, "Cadastro.txt");
+                            if (!txtFile.exists()) continue;
+                            
+                            java.util.Map<String, String> data = new java.util.HashMap<>();
+                            for (String line : java.nio.file.Files.readAllLines(txtFile.toPath(), java.nio.charset.StandardCharsets.UTF_8)) {
+                                line = line.trim();
+                                if (line.isEmpty()) continue;
+                                int colIdx = line.indexOf(":");
+                                if (colIdx != -1) {
+                                    String rawKey = line.substring(0, colIdx);
+                                    String normalizedKey = java.text.Normalizer.normalize(rawKey, java.text.Normalizer.Form.NFD)
+                                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                                        .toLowerCase()
+                                        .replaceAll("[^a-z0-9]", "")
+                                        .trim();
+                                    String val = line.substring(colIdx + 1).trim();
+                                    data.put(normalizedKey, val);
+                                }
+                            }
+                            
+                            String nome = data.get("nomedoespaco");
+                            if (nome == null || nome.isEmpty()) continue;
+                            
+                            // 1. Criar Espaco
+                            com.ocupa.ocupa.model.Espaco espaco = new com.ocupa.ocupa.model.Espaco();
+                            espaco.setNome(nome);
+                            espaco.setEndereco(data.get("endereco"));
+                            espaco.setDescricao(data.get("descricaohistorico"));
+                            espaco.setCriadoPorEmail("admin@admin.com");
+                            
+                            // Parse capacidade
+                            String capRaw = data.get("capacidadeaproximadadepublico");
+                            if (capRaw != null) {
+                                try {
+                                    espaco.setCapacidade(Integer.parseInt(capRaw.trim()));
+                                } catch (Exception ex) {
+                                    espaco.setCapacidade(0);
+                                }
+                            } else {
+                                espaco.setCapacidade(0);
+                            }
+                            
+                            // Parse latitude/longitude
+                            String latLongRaw = data.get("latitudelongitude");
+                            if (latLongRaw != null && latLongRaw.contains(",")) {
+                                String[] parts = latLongRaw.split(",");
+                                try {
+                                    espaco.setLatitude(Double.parseDouble(parts[0].trim()));
+                                    espaco.setLongitude(Double.parseDouble(parts[1].trim()));
+                                } catch (Exception ex) {
+                                    System.err.println("Erro ao parsear coordenadas: " + ex.getMessage());
+                                }
+                            }
+                            
+                            // Parse attributes
+                            String attrRaw = data.get("atributosfisicos");
+                            if (attrRaw != null) {
+                                String normalizedAttr = java.text.Normalizer.normalize(attrRaw, java.text.Normalizer.Form.NFD)
+                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                                    .toLowerCase();
+                                espaco.setCobertura(normalizedAttr.contains("cober"));
+                                espaco.setIluminacao(normalizedAttr.contains("ilumi"));
+                                espaco.setEnergia(normalizedAttr.contains("energi"));
+                                espaco.setBanheiro(normalizedAttr.contains("banhe"));
+                            }
+                            
+                            // Parse activities
+                            String actRaw = data.get("atividadespermitidas");
+                            if (actRaw != null) {
+                                String normalizedAct = java.text.Normalizer.normalize(actRaw, java.text.Normalizer.Form.NFD)
+                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                                    .toLowerCase();
+                                espaco.setPermiteGrafite(normalizedAct.contains("grafi") || normalizedAct.contains("mural"));
+                                espaco.setPermiteBatalha(normalizedAct.contains("batalh"));
+                                espaco.setPermiteDanca(normalizedAct.contains("danc"));
+                            }
+
+                            // 2. Carregar mídias da galeria
+                            java.io.File galleryDir = new java.io.File(placeDir, "Galeria de Fotos do Local");
+                            if (galleryDir.exists() && galleryDir.isDirectory()) {
+                                java.io.File[] mediaFiles = galleryDir.listFiles();
+                                if (mediaFiles != null) {
+                                    for (java.io.File mf : mediaFiles) {
+                                        if (mf.isFile() && (mf.getName().toLowerCase().endsWith(".png") || mf.getName().toLowerCase().endsWith(".jpg") || mf.getName().toLowerCase().endsWith(".jpeg"))) {
+                                            String mBase64 = getBase64DataUrl(mf);
+                                            if (mBase64 != null) {
+                                                com.ocupa.ocupa.model.EspacoMedia em = new com.ocupa.ocupa.model.EspacoMedia();
+                                                em.setMediaType("IMAGE");
+                                                em.setUrl(mBase64);
+                                                em.setCaption(""); // Sem legenda
+                                                em.setEspaco(espaco);
+                                                espaco.getMediaItems().add(em);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            espacoRepo.save(espaco);
+                            System.out.println("Espaco " + nome + " cadastrado e populado com sucesso!");
+                        } catch (Exception ex) {
+                            System.err.println("Erro ao popular espaco na pasta " + placeDir.getName() + ": " + ex.getMessage());
                             ex.printStackTrace();
                         }
                     }

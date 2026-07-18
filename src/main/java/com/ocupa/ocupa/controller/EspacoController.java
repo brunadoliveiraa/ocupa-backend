@@ -22,12 +22,24 @@ public class EspacoController {
     }
 
     @PostMapping
-    public Espaco create(@RequestBody Espaco e) { return repo.save(e); }
+    public Espaco create(@RequestBody Espaco e) {
+        if (e.getMediaItems() != null) {
+            for (com.ocupa.ocupa.model.EspacoMedia media : e.getMediaItems()) {
+                media.setEspaco(e);
+            }
+        }
+        return repo.save(e);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Espaco> update(@PathVariable Integer id, @RequestBody Espaco e) {
         return repo.findById(id).map(existing -> {
             e.setId(existing.getId());
+            if (e.getMediaItems() != null) {
+                for (com.ocupa.ocupa.model.EspacoMedia media : e.getMediaItems()) {
+                    media.setEspaco(e);
+                }
+            }
             return ResponseEntity.ok(repo.save(e));
         }).orElse(ResponseEntity.notFound().build());
     }

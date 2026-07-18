@@ -1,0 +1,7 @@
+- Nome do Espaço: Passagem da Vila Eugênia
+- Endereço: Av. Professor Djalma Cavalcanti, 6 - Marechal Hermes
+- Descrição / Histórico: Local de passagem mas que possui alguns registros nos muros e acolhe qualquer evento artístico de pequeno porte.
+- Capacidade Aproximada de Público: 40
+- Latitude/Longitude: -22.852588378300702, -43.37389837096926
+- Atributos Físicos: Energia elétrica, iluminação
+- Atividades Permitidas: Batalhas de rimas, danças, grafite/mural
