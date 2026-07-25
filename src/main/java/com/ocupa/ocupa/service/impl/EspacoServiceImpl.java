@@ -32,4 +32,14 @@ public class EspacoServiceImpl implements EspacoService {
     public void delete(Espaco espaco) {
         repository.delete(espaco);
     }
+
+    @Override
+    public Optional<Espaco> findByNome(String nome) {
+        return repository.findByNome(nome);
+    }
+
+    @Override
+    public boolean existsByNome(String nome) {
+        return repository.existsByNome(nome);
+    }
 }

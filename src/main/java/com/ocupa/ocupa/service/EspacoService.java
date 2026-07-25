@@ -9,4 +9,6 @@ public interface EspacoService {
     Optional<Espaco> findById(Integer id);
     Espaco save(Espaco espaco);
     void delete(Espaco espaco);
+    Optional<Espaco> findByNome(String nome);
+    boolean existsByNome(String nome);
 }
