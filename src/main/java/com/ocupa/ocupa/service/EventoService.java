@@ -9,4 +9,6 @@ public interface EventoService {
     Optional<Evento> findById(Integer id);
     Evento save(Evento evento);
     void delete(Evento evento);
+    Optional<Evento> findByNome(String nome);
+    boolean existsByNome(String nome);
 }

@@ -32,4 +32,14 @@ public class EventoServiceImpl implements EventoService {
     public void delete(Evento evento) {
         repository.delete(evento);
     }
+
+    @Override
+    public Optional<Evento> findByNome(String nome) {
+        return repository.findByNome(nome);
+    }
+
+    @Override
+    public boolean existsByNome(String nome) {
+        return repository.existsByNome(nome);
+    }
 }

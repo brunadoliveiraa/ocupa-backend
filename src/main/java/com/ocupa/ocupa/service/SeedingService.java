@@ -21,6 +21,7 @@ public class SeedingService {
     private final ArtistaRepository artistaRepo;
     private final PortfolioRepository portfolioRepo;
     private final EspacoRepository espacoRepo;
+    private final EventoRepository eventoRepo;
     private final JdbcTemplate jdbcTemplate;
     private final DataSource dataSource;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -32,6 +33,7 @@ public class SeedingService {
         seedAdminUsers();
         seedArtistas();
         seedEspacos();
+        seedEventos();
     }
 
     private void configureDatabasePacketSize() {
@@ -158,10 +160,10 @@ public class SeedingService {
     }
 
     private void seedEspacos() {
-        File popularPlacesDir = new File("Popular lugares");
+        File popularPlacesDir = new File("Popular espacos");
         if (!popularPlacesDir.exists() || !popularPlacesDir.isDirectory()) return;
 
-        System.out.println("Encontrada pasta 'Popular lugares'. Iniciando populacao de dados...");
+        System.out.println("Encontrada pasta 'Popular espacos'. Iniciando populacao de dados...");
         File[] placeDirs = popularPlacesDir.listFiles(File::isDirectory);
         if (placeDirs == null) return;
 
@@ -207,6 +209,83 @@ public class SeedingService {
                 System.out.println("Espaco " + espaco.getNome() + " cadastrado e populado com sucesso!");
             } catch (Exception ex) {
                 System.err.println("Erro ao popular espaco na pasta " + placeDir.getName() + ": " + ex.getMessage());
+            }
+        }
+    }
+
+    private void seedEventos() {
+        File popularEventsDir = new File("Popular eventos");
+        if (!popularEventsDir.exists() || !popularEventsDir.isDirectory()) return;
+
+        System.out.println("Encontrada pasta 'Popular eventos'. Iniciando populacao de dados...");
+        File[] eventDirs = popularEventsDir.listFiles(File::isDirectory);
+        if (eventDirs == null) return;
+
+        for (File eventDir : eventDirs) {
+            try {
+                File jsonFile = new File(eventDir, "Detalhes.json");
+                if (!jsonFile.exists()) continue;
+
+                Map<?, ?> root = objectMapper.readValue(jsonFile, Map.class);
+
+                String nome = (String) root.get("nome");
+                if (nome == null || nome.isEmpty()) continue;
+
+                // Verificar se o evento ja existe
+                if (eventoRepo.findByNome(nome).isPresent()) {
+                    System.out.println("Evento " + nome + " ja existe no banco. Pulando...");
+                    continue;
+                }
+
+                Evento evento = new Evento();
+                evento.setNome(nome);
+                evento.setDescricao((String) root.get("descricao"));
+                
+                String dateStr = (String) root.get("dataEvento");
+                if (dateStr != null) {
+                    evento.setDataEvento(java.time.LocalDate.parse(dateStr));
+                }
+                
+                String timeStr = (String) root.get("horaEvento");
+                if (timeStr != null) {
+                    evento.setHoraEvento(java.time.LocalTime.parse(timeStr));
+                }
+
+                // Vincular Artista
+                String artistaNome = (String) root.get("artistaNome");
+                if (artistaNome != null) {
+                    artistaRepo.findByNome(artistaNome).ifPresent(evento::setArtista);
+                }
+
+                // Vincular Espaço
+                String espacoNome = (String) root.get("espacoNome");
+                if (espacoNome != null) {
+                    espacoRepo.findByNome(espacoNome).ifPresent(espaco -> {
+                        evento.setEspaco(espaco);
+                        evento.setLatitude(espaco.getLatitude());
+                        evento.setLongitude(espaco.getLongitude());
+                    });
+                }
+
+                evento.setCriadoPorEmail("admin@admin.com");
+
+                // Buscar a foto de capa do evento
+                String fotoUrl = null;
+                File[] files = eventDir.listFiles();
+                if (files != null) {
+                    for (File f : files) {
+                        if (f.isFile() && f.getName().toLowerCase().startsWith("capa")) {
+                            fotoUrl = getBase64DataUrl(f);
+                            break;
+                        }
+                    }
+                }
+                evento.setFotoUrl(fotoUrl);
+
+                eventoRepo.save(evento);
+                System.out.println("Evento " + nome + " cadastrado e populado com sucesso!");
+            } catch (Exception ex) {
+                System.err.println("Erro ao popular evento na pasta " + eventDir.getName() + ": " + ex.getMessage());
             }
         }
     }
