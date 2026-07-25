@@ -20,10 +20,8 @@ public class Evento {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
-    private String local;
     private LocalDate dataEvento;
     private LocalTime horaEvento;
-    private Integer publicoEstimado;
 
     @ManyToOne
     @JoinColumn(name = "artista_id")
