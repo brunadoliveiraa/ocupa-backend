@@ -1,27 +1,26 @@
 package com.ocupa.ocupa.controller;
 
+import com.ocupa.ocupa.dto.LoginRequest;
+import com.ocupa.ocupa.dto.RegisterRequest;
 import com.ocupa.ocupa.model.Artista;
 import com.ocupa.ocupa.model.User;
-import com.ocupa.ocupa.repository.ArtistaRepository;
-import com.ocupa.ocupa.repository.UserRepository;
+import com.ocupa.ocupa.service.ArtistaService;
+import com.ocupa.ocupa.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    private final UserRepository userRepository;
-    private final ArtistaRepository artistaRepository;
+    private final UserService userService;
+    private final ArtistaService artistaService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    public AuthController(UserRepository userRepository, ArtistaRepository artistaRepository) {
-        this.userRepository = userRepository;
-        this.artistaRepository = artistaRepository;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -33,7 +32,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Papel inválido. Use ARTISTA ou EMPREENDEDOR"));
         }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userService.existsByEmail(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Email já cadastrado"));
         }
 
@@ -44,16 +43,16 @@ public class AuthController {
         user.setSenha(passwordEncoder.encode(request.getSenha()));
 
         if (request.getRole().equals("ARTISTA")) {
-            var artista = new Artista();
+            Artista artista = new Artista();
             artista.setNome(request.getNome());
             artista.setCategoria(request.getCategoria());
-            artista = artistaRepository.save(artista);
+            artista = artistaService.save(artista);
             user.setArtistaId(artista.getId());
         }
 
-        userRepository.save(user);
+        userService.save(user);
 
-        java.util.Map<String, Object> registerResponse = new java.util.HashMap<>();
+        Map<String, Object> registerResponse = new HashMap<>();
         registerResponse.put("id", user.getId());
         registerResponse.put("nome", user.getNome());
         registerResponse.put("email", user.getEmail());
@@ -66,13 +65,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         if (request.getEmail() == null || request.getSenha() == null) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Email e senha são obrigatórios"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Email e senha são obrigatórios"));
         }
 
-        return userRepository.findByEmail(request.getEmail())
+        return userService.findByEmail(request.getEmail())
                 .map(user -> {
                     if (passwordEncoder.matches(request.getSenha(), user.getSenha())) {
-                        java.util.Map<String, Object> loginResponse = new java.util.HashMap<>();
+                        Map<String, Object> loginResponse = new HashMap<>();
                         loginResponse.put("id", user.getId());
                         loginResponse.put("nome", user.getNome());
                         loginResponse.put("email", user.getEmail());
@@ -80,77 +79,8 @@ public class AuthController {
                         loginResponse.put("artistaId", user.getArtistaId());
                         return ResponseEntity.ok(loginResponse);
                     }
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("error", "Credenciais inválidas"));
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciais inválidas"));
                 })
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("error", "Credenciais inválidas")));
-    }
-
-    public static class RegisterRequest {
-        private String nome;
-        private String email;
-        private String senha;
-        private String role;
-        private String categoria;
-
-        public String getNome() {
-            return nome;
-        }
-
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getSenha() {
-            return senha;
-        }
-
-        public void setSenha(String senha) {
-            this.senha = senha;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public String getCategoria() {
-            return categoria;
-        }
-
-        public void setCategoria(String categoria) {
-            this.categoria = categoria;
-        }
-    }
-
-    public static class LoginRequest {
-        private String email;
-        private String senha;
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getSenha() {
-            return senha;
-        }
-
-        public void setSenha(String senha) {
-            this.senha = senha;
-        }
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciais inválidas")));
     }
 }

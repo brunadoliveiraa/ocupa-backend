@@ -1,9 +1,13 @@
 package com.ocupa.ocupa.model;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,52 +25,4 @@ public class User {
     private String role;
 
     private Integer artistaId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Integer getArtistaId() {
-        return artistaId;
-    }
-
-    public void setArtistaId(Integer artistaId) {
-        this.artistaId = artistaId;
-    }
 }

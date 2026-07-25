@@ -34,20 +34,6 @@ public class OcupaBackendApplication {
                 System.err.println("Nao foi possivel definir max_allowed_packet: " + e.getMessage());
             }
 
-            try {
-                jdbcTemplate.execute("ALTER TABLE artista MODIFY COLUMN foto_url LONGTEXT");
-                jdbcTemplate.execute("ALTER TABLE portfolio_media MODIFY COLUMN url LONGTEXT");
-                try {
-                    jdbcTemplate.execute("ALTER TABLE espaco_media MODIFY COLUMN url LONGTEXT");
-                } catch (Exception ignored) {}
-                try {
-                    jdbcTemplate.execute("ALTER TABLE evento ADD COLUMN foto_url LONGTEXT");
-                } catch (Exception ignored) {}
-                System.out.println("Migracao de colunas executada com sucesso!");
-            } catch (Exception e) {
-                System.err.println("Erro ao executar migracao de colunas: " + e.getMessage());
-            }
-
             // Limpar dados de seed anteriores (para evitar duplicidade ou cadastros parciais corrompidos)
             try {
                 // Delete events referencing seeded artists or spaces first to prevent FK failures

@@ -1,9 +1,15 @@
 package com.ocupa.ocupa.model;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "espaco")
+@Getter
+@Setter
 public class Espaco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,38 +35,5 @@ public class Espaco {
     private String criadoPorEmail;
 
     @OneToMany(mappedBy = "espaco", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.List<EspacoMedia> mediaItems = new java.util.ArrayList<>();
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
-    public Boolean getCobertura() { return cobertura; }
-    public void setCobertura(Boolean cobertura) { this.cobertura = cobertura; }
-    public Boolean getIluminacao() { return iluminacao; }
-    public void setIluminacao(Boolean iluminacao) { this.iluminacao = iluminacao; }
-    public Boolean getEnergia() { return energia; }
-    public void setEnergia(Boolean energia) { this.energia = energia; }
-    public Boolean getBanheiro() { return banheiro; }
-    public void setBanheiro(Boolean banheiro) { this.banheiro = banheiro; }
-    public Integer getCapacidade() { return capacidade; }
-    public void setCapacidade(Integer capacidad) { this.capacidade = capacidad; }
-    public Boolean getPermiteGrafite() { return permiteGrafite; }
-    public void setPermiteGrafite(Boolean permiteGrafite) { this.permiteGrafite = permiteGrafite; }
-    public Boolean getPermiteBatalha() { return permiteBatalha; }
-    public void setPermiteBatalha(Boolean permiteBatalha) { this.permiteBatalha = permiteBatalha; }
-    public Boolean getPermiteDanca() { return permiteDanca; }
-    public void setPermiteDanca(Boolean permiteDanca) { this.permiteDanca = permiteDanca; }
-    public Double getLatitude() { return latitude; }
-    public void setLatitude(Double latitude) { this.latitude = latitude; }
-    public Double getLongitude() { return longitude; }
-    public void setLongitude(Double longitude) { this.longitude = longitude; }
-    public String getCriadoPorEmail() { return criadoPorEmail; }
-    public void setCriadoPorEmail(String criadoPorEmail) { this.criadoPorEmail = criadoPorEmail; }
-    public java.util.List<EspacoMedia> getMediaItems() { return mediaItems; }
-    public void setMediaItems(java.util.List<EspacoMedia> mediaItems) { this.mediaItems = mediaItems; }
+    private List<EspacoMedia> mediaItems = new ArrayList<>();
 }
