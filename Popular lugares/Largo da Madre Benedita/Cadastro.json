@@ -1,0 +1,15 @@
+{
+  "nome": "Largo da Madre Benedita",
+  "endereco": "Rua Osman Lins",
+  "descricao": "Largo com conjunto de bares e que costuma reunir batalhas de rima.",
+  "capacidade": 80,
+  "latitude": -22.85015048069393,
+  "longitude": -43.38316329874028,
+  "cobertura": false,
+  "iluminacao": true,
+  "energia": true,
+  "banheiro": false,
+  "permiteGrafite": false,
+  "permiteBatalha": true,
+  "permiteDanca": false
+}

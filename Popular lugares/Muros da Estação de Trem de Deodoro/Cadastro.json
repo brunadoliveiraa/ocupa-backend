@@ -1,0 +1,15 @@
+{
+  "nome": "Muros da Estação de Trem de Deodoro",
+  "endereco": "Tv. Reta de Honório, 153",
+  "descricao": "Espaço que costuma abrigar grafites e pixos.",
+  "capacidade": 150,
+  "latitude": -22.854042071204635,
+  "longitude": -43.37788103523276,
+  "cobertura": false,
+  "iluminacao": true,
+  "energia": false,
+  "banheiro": false,
+  "permiteGrafite": true,
+  "permiteBatalha": false,
+  "permiteDanca": false
+}

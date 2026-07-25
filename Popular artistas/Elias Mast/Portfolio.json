@@ -1,0 +1,16 @@
+{
+  "artista": {
+    "nome": "Elias Mast",
+    "categoria": "Grafite e fotografia",
+    "cidade": "Rio de Janeiro"
+  },
+  "user": {
+    "email": "elias.mast@gmail.com",
+    "senha": "1234"
+  },
+  "portfolio": {
+    "headline": "Grafiteiro e Fotógrafo",
+    "about": "Elias Monsterato, 32 anos. Grafitou bastante a comunidade e participa ativamente de processos sociais locais. Atualmente trabalha com fotografia, filmagem e produção de videoclipes para a cena hip hop.",
+    "contacts": "elias.mast@gmail.com"
+  }
+}

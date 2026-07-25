@@ -1,0 +1,16 @@
+{
+  "artista": {
+    "nome": "Igor Izy",
+    "categoria": "Grafite",
+    "cidade": "Rio de Janeiro"
+  },
+  "user": {
+    "email": "igor.izy@gmail.com",
+    "senha": "1234"
+  },
+  "portfolio": {
+    "headline": "Grafiteiro",
+    "about": "Igor Izy, 27 anos. Trabalha com grafite a mais de 10 anos e tem trabalhos importantes para grandes marcas como a nike. Já pintou os camarotes da Sapucaí e participou de projetos para Zeca Pagodinho e Jorge Aragão. Além disso, aplica workshops e palestras contando sua trajetória com foco em realização de sonhos. Ex-aluno do Instituto Bola Pra Frente, é engajado em projetos sociais como o Tinta e Cacau e outros externos à comunidade também.",
+    "contacts": "igor.izy@gmail.com"
+  }
+}

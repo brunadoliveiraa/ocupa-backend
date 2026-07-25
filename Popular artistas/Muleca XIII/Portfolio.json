@@ -1,0 +1,16 @@
+{
+  "artista": {
+    "nome": "Muleca XIII",
+    "categoria": "Rap e freestyle",
+    "cidade": "Rio de Janeiro"
+  },
+  "user": {
+    "email": "muleca.xiii@gmail.com",
+    "senha": "1234"
+  },
+  "portfolio": {
+    "headline": "MC, Compositora e Freestyler",
+    "about": "Samantha, 38 anos. Desde a infância, mantém uma forte ligação com a cultura hip hop, escrevendo suas primeiras letras de rap aos 12 anos. Passou a integrar a cena carioca ainda na adolescência, participando de batalhas de freestyle e, em 2006, entrou para o coletivo Comando S.E.L.V.A., onde consolidou sua trajetória artística. Desde então, desenvolve trabalhos autorais e leva o rap como uma importante ferramenta de expressão, identidade e resistência.",
+    "contacts": "muleca.xiii@gmail.com"
+  }
+}

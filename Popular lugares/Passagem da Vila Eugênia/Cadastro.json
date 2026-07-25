@@ -1,0 +1,15 @@
+{
+  "nome": "Passagem da Vila Eugênia",
+  "endereco": "Av. Professor Djalma Cavalcanti, 6 - Marechal Hermes",
+  "descricao": "Local de passagem mas que possui alguns registros nos muros e acolhe qualquer evento artístico de pequeno porte.",
+  "capacidade": 40,
+  "latitude": -22.852588378300702,
+  "longitude": -43.37389837096926,
+  "cobertura": false,
+  "iluminacao": true,
+  "energia": true,
+  "banheiro": false,
+  "permiteGrafite": true,
+  "permiteBatalha": true,
+  "permiteDanca": false
+}

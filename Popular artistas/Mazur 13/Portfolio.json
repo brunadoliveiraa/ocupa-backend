@@ -1,0 +1,16 @@
+{
+  "artista": {
+    "nome": "Mazur 13",
+    "categoria": "Trap e freestyle",
+    "cidade": "Rio de Janeiro"
+  },
+  "user": {
+    "email": "mazur.13@gmail.com",
+    "senha": "1234"
+  },
+  "portfolio": {
+    "headline": "MC",
+    "about": "Iuri Lima, 28 anos. MC. Já produziu várias faixas e videoclipes. Proprietário da Cacto Records (produtora local).",
+    "contacts": "mazur.13@gmail.com"
+  }
+}

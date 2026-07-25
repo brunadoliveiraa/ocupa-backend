@@ -1,0 +1,15 @@
+{
+  "nome": "Piscinão de Deodoro - Rua",
+  "endereco": "Av. Maquinista José Santana, 103 - Marechal Hermes",
+  "descricao": "Espaço de passagem ou tido como \"ocioso\" que serve de palco para a arte.",
+  "capacidade": 70,
+  "latitude": -22.852811403065406,
+  "longitude": -43.38298508561204,
+  "cobertura": false,
+  "iluminacao": false,
+  "energia": false,
+  "banheiro": false,
+  "permiteGrafite": false,
+  "permiteBatalha": true,
+  "permiteDanca": false
+}

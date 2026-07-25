@@ -1,0 +1,16 @@
+{
+  "artista": {
+    "nome": "Ébano Bronca",
+    "categoria": "Grafite",
+    "cidade": "Rio de Janeiro"
+  },
+  "user": {
+    "email": "ebano.bronca@gmail.com",
+    "senha": "1234"
+  },
+  "portfolio": {
+    "headline": "Grafiteiro",
+    "about": "Flávio dos Santos, 41 anos. Um dos fundadores da Batalha da Caixinha e um dos precursores do movimento hip hop na comunidade. Ensinou grafite para a geração de agora e, assim como despertou em muita gente da comunidade a paixão pela arte, foi mestre de grande parte dos artistas locais que hoje vivem das suas expressões e lutam para conquistar seu lugar.",
+    "contacts": "ebano.bronca@gmail.com"
+  }
+}
