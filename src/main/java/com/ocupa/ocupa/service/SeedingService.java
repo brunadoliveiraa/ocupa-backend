@@ -39,26 +39,6 @@ public class SeedingService {
             System.err.println("Nao foi possivel definir max_allowed_packet: " + e.getMessage());
         }
 
-        // Limpar dados de seed anteriores (para evitar duplicidade ou cadastros parciais corrompidos)
-        try {
-            jdbcTemplate.execute("DELETE FROM evento WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
-            jdbcTemplate.execute("DELETE FROM evento WHERE espaco_id IN (SELECT id FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua'))");
-            
-            jdbcTemplate.execute("DELETE FROM analytics WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
-            jdbcTemplate.execute("DELETE FROM portfolio_media WHERE portfolio_id IN (SELECT id FROM portfolio WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca')))");
-            jdbcTemplate.execute("DELETE FROM portfolio WHERE artista_id IN (SELECT id FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca'))");
-            jdbcTemplate.execute("DELETE FROM users WHERE email IN ('elias.mast@gmail.com', 'igor.izy@gmail.com', 'mazur.13@gmail.com', 'ebano.bronca@gmail.com')");
-            jdbcTemplate.execute("DELETE FROM artista WHERE nome IN ('Elias Mast', 'Igor Izy', 'Mazur 13', 'Ébano Bronca')");
-            
-            // Cleanup seeded spaces
-            jdbcTemplate.execute("DELETE FROM espaco_media WHERE espaco_id IN (SELECT id FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua'))");
-            jdbcTemplate.execute("DELETE FROM espaco WHERE nome IN ('Largo da Madre Benedita', 'Muros da Estação de Trem de Deodoro', 'Passagem da Vila Eugênia', 'Piscinão de Deodoro - Fachada', 'Piscinão de Deodoro - Rua')");
-            
-            System.out.println("Limpeza de registros antigos executada com sucesso!");
-        } catch (Exception e) {
-            System.err.println("Erro ao limpar registros antigos: " + e.getMessage());
-        }
-
         // Register admin@admin.com
         if (!userRepo.findByEmail("admin@admin.com").isPresent()) {
             User admin = new User();
@@ -148,7 +128,7 @@ public class SeedingService {
                         User user = new User();
                         user.setNome(nome);
                         user.setEmail(email);
-                        user.setSenha(encoder.encode(senha != null ? senha : "123"));
+                        user.setSenha(encoder.encode(senha != null ? senha : "1234"));
                         user.setRole("ARTISTA");
                         user.setArtistaId(artista.getId());
                         userRepo.save(user);
@@ -223,6 +203,12 @@ public class SeedingService {
                         
                         String nome = data.get("nomedoespaco");
                         if (nome == null || nome.isEmpty()) continue;
+
+                        // Verificar se o espaco ja existe
+                        if (espacoRepo.findByNome(nome).isPresent()) {
+                            System.out.println("Espaco " + nome + " ja existe no banco. Pulando...");
+                            continue;
+                        }
                         
                         // 1. Criar Espaco
                         Espaco espaco = new Espaco();
