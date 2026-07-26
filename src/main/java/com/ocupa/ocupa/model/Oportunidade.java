@@ -24,6 +24,8 @@ public class Oportunidade {
     private LocalDate dataInicio;
     private LocalDate dataFim;
     private String inscricaoLink;
-    private String contato;
     private String criadoPorEmail;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String fotoUrl;
 }
