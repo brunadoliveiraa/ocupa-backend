@@ -22,6 +22,7 @@ public class SeedingService {
     private final PortfolioRepository portfolioRepo;
     private final EspacoRepository espacoRepo;
     private final EventoRepository eventoRepo;
+    private final OportunidadeRepository oportunidadeRepo;
     private final JdbcTemplate jdbcTemplate;
     private final DataSource dataSource;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -34,6 +35,7 @@ public class SeedingService {
         seedArtistas();
         seedEspacos();
         seedEventos();
+        seedOportunidades();
     }
 
     private void configureDatabasePacketSize() {
@@ -302,6 +304,66 @@ public class SeedingService {
             return "data:" + mimeType + ";base64," + base64;
         } catch (Exception e) {
             return null;
+        }
+    }
+    private void seedOportunidades() {
+        File popularOpDir = new File("Popular oportunidades");
+        if (!popularOpDir.exists() || !popularOpDir.isDirectory()) return;
+
+        System.out.println("Encontrada pasta 'Popular oportunidades'. Iniciando populacao de dados...");
+        File[] opDirs = popularOpDir.listFiles(File::isDirectory);
+        if (opDirs == null) return;
+
+        for (File opDir : opDirs) {
+            try {
+                File jsonFile = new File(opDir, "oportunidade.json");
+                if (!jsonFile.exists()) continue;
+
+                Map<?, ?> root = objectMapper.readValue(jsonFile, Map.class);
+
+                String titulo = (String) root.get("titulo");
+                if (titulo == null || titulo.isEmpty()) continue;
+
+                if (oportunidadeRepo.findByTitulo(titulo).isPresent()) {
+                    System.out.println("Oportunidade " + titulo + " ja existe no banco. Pulando...");
+                    continue;
+                }
+
+                Oportunidade op = new Oportunidade();
+                op.setTitulo(titulo);
+                op.setTipo((String) root.get("tipo"));
+                op.setDescricao((String) root.get("descricao"));
+                op.setLocal((String) root.get("local"));
+                op.setInscricaoLink((String) root.get("inscricaoLink"));
+
+                String dataInicioStr = (String) root.get("dataInicio");
+                if (dataInicioStr != null) {
+                    op.setDataInicio(java.time.LocalDate.parse(dataInicioStr));
+                }
+                String dataFimStr = (String) root.get("dataFim");
+                if (dataFimStr != null) {
+                    op.setDataFim(java.time.LocalDate.parse(dataFimStr));
+                }
+
+                op.setCriadoPorEmail("admin@admin.com");
+
+                // Buscar foto de capa
+                File[] files = opDir.listFiles();
+                if (files != null) {
+                    for (File f : files) {
+                        String name = f.getName().toLowerCase();
+                        if (f.isFile() && !name.endsWith(".json") && (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".webp"))) {
+                            op.setFotoUrl(getBase64DataUrl(f));
+                            break;
+                        }
+                    }
+                }
+
+                oportunidadeRepo.save(op);
+                System.out.println("Oportunidade " + titulo + " cadastrada e populada com sucesso!");
+            } catch (Exception ex) {
+                System.err.println("Erro ao popular oportunidade na pasta " + opDir.getName() + ": " + ex.getMessage());
+            }
         }
     }
 }
