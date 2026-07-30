@@ -11,4 +11,6 @@ public interface EspacoService {
     void delete(Espaco espaco);
     Optional<Espaco> findByNome(String nome);
     boolean existsByNome(String nome);
+    List<Espaco> findByStatus(String status);
+    List<Espaco> findByCriadoPorEmail(String email);
 }

@@ -42,4 +42,14 @@ public class EspacoServiceImpl implements EspacoService {
     public boolean existsByNome(String nome) {
         return repository.existsByNome(nome);
     }
+
+    @Override
+    public List<Espaco> findByStatus(String status) {
+        return repository.findByStatus(status);
+    }
+
+    @Override
+    public List<Espaco> findByCriadoPorEmail(String email) {
+        return repository.findByCriadoPorEmail(email);
+    }
 }

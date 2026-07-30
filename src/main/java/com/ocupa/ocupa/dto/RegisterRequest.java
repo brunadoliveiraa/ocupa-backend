@@ -10,5 +10,4 @@ public class RegisterRequest {
     private String email;
     private String senha;
     private String role;
-    private String categoria;
 }

@@ -32,4 +32,14 @@ public class OportunidadeServiceImpl implements OportunidadeService {
     public void delete(Oportunidade oportunidade) {
         repository.delete(oportunidade);
     }
+
+    @Override
+    public List<Oportunidade> findByStatus(String status) {
+        return repository.findByStatus(status);
+    }
+
+    @Override
+    public List<Oportunidade> findByCriadoPorEmail(String email) {
+        return repository.findByCriadoPorEmail(email);
+    }
 }

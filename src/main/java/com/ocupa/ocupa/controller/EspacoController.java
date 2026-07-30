@@ -6,6 +6,8 @@ import com.ocupa.ocupa.service.EspacoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,20 @@ public class EspacoController {
 
     @GetMapping
     public List<Espaco> all() {
-        return service.findAll();
+        return service.findByStatus("APROVADO");
+    }
+
+    @GetMapping("/pendentes")
+    public List<Espaco> pendentes() {
+        return service.findByStatus("PENDENTE");
+    }
+
+    @GetMapping("/meus")
+    public List<Espaco> meus(@RequestParam(required = false) String email) {
+        if (email == null) {
+            email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }
+        return service.findByCriadoPorEmail(email);
     }
 
     @GetMapping("/{id}")
@@ -42,6 +57,21 @@ public class EspacoController {
                 media.setEspaco(e);
             }
         }
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (isAdmin) {
+            e.setStatus("APROVADO");
+        } else {
+            e.setStatus("PENDENTE");
+        }
+
+        if (auth != null && auth.getPrincipal() instanceof String) {
+            e.setCriadoPorEmail((String) auth.getPrincipal());
+        }
+
         return ResponseEntity.ok(service.save(e));
     }
 
@@ -58,12 +88,34 @@ public class EspacoController {
             }
 
             e.setId(existing.getId());
+            e.setStatus(existing.getStatus());
+            e.setMotivoRejeicao(existing.getMotivoRejeicao());
+            e.setCriadoPorEmail(existing.getCriadoPorEmail());
+            
             if (e.getMediaItems() != null) {
                 for (EspacoMedia media : e.getMediaItems()) {
                     media.setEspaco(e);
                 }
             }
             return ResponseEntity.ok(service.save(e));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/aprovar")
+    public ResponseEntity<Espaco> aprovar(@PathVariable Integer id) {
+        return service.findById(id).map(existing -> {
+            existing.setStatus("APROVADO");
+            existing.setMotivoRejeicao(null);
+            return ResponseEntity.ok(service.save(existing));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/rejeitar")
+    public ResponseEntity<Espaco> rejeitar(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        return service.findById(id).map(existing -> {
+            existing.setStatus("REJEITADO");
+            existing.setMotivoRejeicao(body.get("motivoRejeicao"));
+            return ResponseEntity.ok(service.save(existing));
         }).orElse(ResponseEntity.notFound().build());
     }
 

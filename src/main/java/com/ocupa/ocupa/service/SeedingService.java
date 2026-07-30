@@ -114,6 +114,7 @@ public class SeedingService {
                 
                 // 1. Criar Artista
                 artista.setFotoUrl(fotoUrl);
+                artista.setStatus("APROVADO");
                 artista = artistaRepo.save(artista);
                 
                 // 2. Criar Usuario
@@ -185,6 +186,7 @@ public class SeedingService {
                 
                 // Configurar metadados adicionais do Espaco
                 espaco.setCriadoPorEmail("admin@admin.com");
+                espaco.setStatus("APROVADO");
 
                 // Carregar mídias da galeria
                 File galleryDir = new File(placeDir, "Galeria de Fotos do Local");
@@ -270,6 +272,7 @@ public class SeedingService {
                 }
 
                 evento.setCriadoPorEmail("admin@admin.com");
+                evento.setStatus("APROVADO");
 
                 // Buscar a foto de capa do evento
                 String fotoUrl = null;
@@ -346,6 +349,7 @@ public class SeedingService {
                 }
 
                 op.setCriadoPorEmail("admin@admin.com");
+                op.setStatus("APROVADO");
 
                 // Buscar foto de capa
                 File[] files = opDir.listFiles();

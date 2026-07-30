@@ -11,4 +11,6 @@ public interface EventoService {
     void delete(Evento evento);
     Optional<Evento> findByNome(String nome);
     boolean existsByNome(String nome);
+    List<Evento> findByStatus(String status);
+    List<Evento> findByCriadoPorEmail(String email);
 }

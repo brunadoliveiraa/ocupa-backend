@@ -42,4 +42,14 @@ public class EventoServiceImpl implements EventoService {
     public boolean existsByNome(String nome) {
         return repository.existsByNome(nome);
     }
+
+    @Override
+    public List<Evento> findByStatus(String status) {
+        return repository.findByStatus(status);
+    }
+
+    @Override
+    public List<Evento> findByCriadoPorEmail(String email) {
+        return repository.findByCriadoPorEmail(email);
+    }
 }

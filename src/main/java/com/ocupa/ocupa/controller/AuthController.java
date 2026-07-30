@@ -1,5 +1,6 @@
 package com.ocupa.ocupa.controller;
 
+import com.ocupa.ocupa.config.JwtUtil;
 import com.ocupa.ocupa.dto.LoginRequest;
 import com.ocupa.ocupa.dto.RegisterRequest;
 import com.ocupa.ocupa.model.Artista;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class AuthController {
     private final UserService userService;
     private final ArtistaService artistaService;
+    private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/register")
@@ -28,8 +30,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Nome, email, senha e papel são obrigatórios"));
         }
 
-        if (!request.getRole().equals("ARTISTA") && !request.getRole().equals("EMPREENDEDOR")) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Papel inválido. Use ARTISTA ou EMPREENDEDOR"));
+        if (!request.getRole().equals("ARTISTA") && !request.getRole().equals("COLABORADOR")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Papel inválido. Use ARTISTA ou COLABORADOR"));
         }
 
         if (userService.existsByEmail(request.getEmail())) {
@@ -45,21 +47,27 @@ public class AuthController {
         if (request.getRole().equals("ARTISTA")) {
             Artista artista = new Artista();
             artista.setNome(request.getNome());
-            artista.setCategoria(request.getCategoria());
+            artista.setStatus("PENDENTE");
             artista = artistaService.save(artista);
             user.setArtistaId(artista.getId());
         }
 
         userService.save(user);
+        
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId(), user.getArtistaId());
 
-        Map<String, Object> registerResponse = new HashMap<>();
-        registerResponse.put("id", user.getId());
-        registerResponse.put("nome", user.getNome());
-        registerResponse.put("email", user.getEmail());
-        registerResponse.put("role", user.getRole());
-        registerResponse.put("artistaId", user.getArtistaId());
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", user.getId());
+        userData.put("nome", user.getNome());
+        userData.put("email", user.getEmail());
+        userData.put("role", user.getRole());
+        userData.put("artistaId", user.getArtistaId());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", userData);
 
-        return ResponseEntity.ok(registerResponse);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -71,13 +79,20 @@ public class AuthController {
         return userService.findByEmail(request.getEmail())
                 .map(user -> {
                     if (passwordEncoder.matches(request.getSenha(), user.getSenha())) {
-                        Map<String, Object> loginResponse = new HashMap<>();
-                        loginResponse.put("id", user.getId());
-                        loginResponse.put("nome", user.getNome());
-                        loginResponse.put("email", user.getEmail());
-                        loginResponse.put("role", user.getRole());
-                        loginResponse.put("artistaId", user.getArtistaId());
-                        return ResponseEntity.ok(loginResponse);
+                        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId(), user.getArtistaId());
+                        
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("id", user.getId());
+                        userData.put("nome", user.getNome());
+                        userData.put("email", user.getEmail());
+                        userData.put("role", user.getRole());
+                        userData.put("artistaId", user.getArtistaId());
+                        
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("token", token);
+                        response.put("user", userData);
+                        
+                        return ResponseEntity.ok(response);
                     }
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciais inválidas"));
                 })

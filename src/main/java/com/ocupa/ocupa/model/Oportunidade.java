@@ -14,6 +14,12 @@ public class Oportunidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
+    private String status = "PENDENTE";
+
+    @Column(columnDefinition = "TEXT")
+    private String motivoRejeicao;
+
     @Column(unique = true, nullable = false)
     private String titulo;
     private String tipo;

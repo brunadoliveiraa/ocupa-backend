@@ -32,4 +32,9 @@ public class ArtistaServiceImpl implements ArtistaService {
     public void delete(Artista artista) {
         repository.delete(artista);
     }
+
+    @Override
+    public List<Artista> findByStatus(String status) {
+        return repository.findByStatus(status);
+    }
 }

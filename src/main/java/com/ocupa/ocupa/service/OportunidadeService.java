@@ -9,4 +9,6 @@ public interface OportunidadeService {
     Optional<Oportunidade> findById(Integer id);
     Oportunidade save(Oportunidade oportunidade);
     void delete(Oportunidade oportunidade);
+    List<Oportunidade> findByStatus(String status);
+    List<Oportunidade> findByCriadoPorEmail(String email);
 }

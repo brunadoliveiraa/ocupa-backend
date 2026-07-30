@@ -13,6 +13,12 @@ public class Artista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
+    private String status = "PENDENTE";
+
+    @Column(columnDefinition = "TEXT")
+    private String motivoRejeicao;
+
     private String nome;
     private String categoria;
 

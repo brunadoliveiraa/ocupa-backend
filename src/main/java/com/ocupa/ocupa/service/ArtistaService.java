@@ -9,4 +9,5 @@ public interface ArtistaService {
     Optional<Artista> findById(Integer id);
     Artista save(Artista artista);
     void delete(Artista artista);
+    List<Artista> findByStatus(String status);
 }
