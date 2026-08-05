@@ -31,7 +31,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/artistas", "/api/artistas/{id}", "/api/espacos", "/api/espacos/{id}", "/api/eventos", "/api/eventos/{id}", "/api/oportunidades", "/api/oportunidades/{id}", "/api/portfolios/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/artistas", "/api/artistas/{id}", "/api/espacos", "/api/espacos/{id}", "/api/eventos", "/api/eventos/{id}", "/api/oportunidades", "/api/oportunidades/{id}", "/api/portfolios/**", "/api/stats").permitAll()
                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/requests", "/api/analytics").permitAll()
                 .requestMatchers("/*/pendentes", "/*/aprovar", "/*/rejeitar").hasRole("ADMIN")
                 .requestMatchers("/api/**").authenticated()

@@ -13,6 +13,16 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.util.Base64;
 import java.util.Map;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -297,15 +307,50 @@ public class SeedingService {
 
     private String getBase64DataUrl(File file) {
         try {
-            byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
-            String base64 = Base64.getEncoder().encodeToString(bytes);
-            String ext = file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase();
-            String mimeType = "image/" + ext;
-            if (ext.equals("jpg") || ext.equals("jpeg")) {
-                mimeType = "image/jpeg";
+            BufferedImage originalImage = ImageIO.read(file);
+            if (originalImage == null) return null;
+
+            int maxWidth = 800;
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+
+            if (width > maxWidth || height > maxWidth) {
+                if (width > height) {
+                    height = (int) (height * ((double) maxWidth / width));
+                    width = maxWidth;
+                } else {
+                    width = (int) (width * ((double) maxWidth / height));
+                    height = maxWidth;
+                }
             }
-            return "data:" + mimeType + ";base64," + base64;
+
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, width, height);
+            g2d.drawImage(originalImage, 0, 0, width, height, null);
+            g2d.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+            writer.setOutput(ios);
+
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            if (param.canWriteCompressed()) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(0.7f);
+            }
+
+            writer.write(null, new IIOImage(resizedImage, null, null), param);
+            ios.close();
+            writer.dispose();
+
+            byte[] bytes = baos.toByteArray();
+            String base64 = Base64.getEncoder().encodeToString(bytes);
+            return "data:image/jpeg;base64," + base64;
         } catch (Exception e) {
+            System.err.println("Erro ao comprimir imagem " + file.getName() + ": " + e.getMessage());
             return null;
         }
     }
