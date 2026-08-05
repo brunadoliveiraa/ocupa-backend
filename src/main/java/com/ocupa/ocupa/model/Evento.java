@@ -43,6 +43,6 @@ public class Evento {
 
     private String criadoPorEmail;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(length = 10485760)
     private String fotoUrl;
 }

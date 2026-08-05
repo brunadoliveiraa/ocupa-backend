@@ -21,7 +21,7 @@ public class EspacoMedia {
 
     private String mediaType;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(length = 10485760)
     private String url;
 
     private String caption;
